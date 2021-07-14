@@ -1,0 +1,2 @@
+rootProject.name = "Rastreio Facil"
+include ':app'
