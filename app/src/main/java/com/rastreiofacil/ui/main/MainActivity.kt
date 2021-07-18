@@ -1,38 +1,89 @@
 package com.rastreiofacil.ui.main
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Dialog
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.rastreiofacil.R
-import com.rastreiofacil.model.AddTrack
 import com.rastreiofacil.model.Track
-import com.rastreiofacil.model.TrackObject
-import com.rastreiofacil.service.Business
-import com.rastreiofacil.service.Service
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity(), MainContract.View {
-    val presenter = MainPresenter()
+    lateinit var dialogNewTrack: Dialog
+    private val presenter = MainPresenter()
+    private val trackingList: MutableList<Track> = mutableListOf()
+    lateinit var adapter: MainAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         presenter.view = this
 
-        val retrofitClient = Service.getBarbeiroServiceInstance()
+        configListeners()
+        configAuth()
+        verifyListTrack()
 
-        val endpoint = retrofitClient.create(Business::class.java)
-        val callback = endpoint.addNewPackage(TrackObject(AddTrack("NX105031197BR")))
+        setUpRecyclerView()
 
-        callback.enqueue(object : Callback<Track>{
-            override fun onResponse(call: Call<Track>, response: Response<Track>) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onFailure(call: Call<Track>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
-        })
     }
+
+    private fun setUpRecyclerView() {
+        recyclerViewPacotes.layoutManager = LinearLayoutManager(this)
+        adapter = MainAdapter(trackingList)
+        recyclerViewPacotes.adapter = adapter
+    }
+
+    private fun verifyListTrack() {
+        presenter.requestListOfTracks()
+    }
+
+    private fun configAuth() {
+        if (FirebaseAuth.getInstance().currentUser == null){
+            FirebaseAuth.getInstance().signInAnonymously()
+        }
+    }
+
+    private fun configListeners() {
+        imageViewAddNewTrack.setOnClickListener { openDialogAddTrack() }
+    }
+
+    private fun openDialogAddTrack() {
+        dialogNewTrack = Dialog(this)
+        dialogNewTrack.setCancelable(false)
+        dialogNewTrack.setTitle("rastrear novo pacote")
+        dialogNewTrack.setContentView(R.layout.dialog_add_tracking)
+
+        val editTextAddNewTrack = dialogNewTrack.findViewById<EditText>(R.id.editTextAddNewTrack)
+        val buttonAddTrack = dialogNewTrack.findViewById<Button>(R.id.buttonAddTrack)
+
+        buttonAddTrack.setOnClickListener {
+            presenter.saveTrackCode(editTextAddNewTrack.text.toString())
+        }
+
+        dialogNewTrack.show()
+    }
+
+    override fun onSuccess() {
+        dialogNewTrack.dismiss()
+        trackingList.clear()
+        verifyListTrack()
+    }
+
+    override fun encomendaJaAdicionada() {
+
+    }
+
+    override fun updateRecyclerView() {
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun updateList(track: Track) {
+        trackingList.add(track)
+    }
+
+
 }

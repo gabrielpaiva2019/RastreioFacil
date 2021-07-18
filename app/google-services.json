@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "12442889138",
+    "project_id": "rastreio-facil-9d0b5",
+    "storage_bucket": "rastreio-facil-9d0b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12442889138:android:7616fa6cb6721b9704d2ab",
+        "android_client_info": {
+          "package_name": "com.rastreiofacil"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12442889138-sekvl79k3lmkvl3lag3qub9o7grekfas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUM5VzgK3Sn6ABWf295Zi9pHR7TcjvFLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12442889138-sekvl79k3lmkvl3lag3qub9o7grekfas.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
